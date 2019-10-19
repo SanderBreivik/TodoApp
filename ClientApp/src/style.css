@@ -1,0 +1,17 @@
+﻿.add-task-form {
+    width: 150px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.register-form {
+    width: 150px;
+    margin: 0;
+
+    box-sizing: border-box;
+   
+}
+
+.register-form input {
+    margin-bottom: 10px;
+}
