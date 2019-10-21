@@ -30,22 +30,19 @@ export class Register extends Component {
                 <h3>Users:</h3>
                 {users.map((user, index) => {
                     return <h4 key={index}>{user.username}</h4>
-                    
+
                 })}
             </div>
         );
     }
 
-     handleSubmit(event) {
+    handleSubmit(event) {
         console.log("Handeling submit");
         event.preventDefault();
-        
+
         var user = {
             username: this.state.username,
-            password: this.state.password,
-            email: this.state.email,
-            firstname: this.state.firstname,
-            lastname: this.state.lastname
+            password: this.state.password
         };
         var headers = {
             'content-type': 'application/json'
@@ -60,8 +57,8 @@ export class Register extends Component {
         }).catch(error => {
             console.error(error);
         });
-        
-       
+
+
     }
 
     handleChange = (event) => {
@@ -71,7 +68,7 @@ export class Register extends Component {
     renderRegisterForm() {
         return (
             <form className="register-form" method="post">
-                <input type="text" name="username" placeholder="Username" required onChange={this.handleChange}/>
+                <input type="text" name="username" placeholder="Username" required onChange={this.handleChange} />
                 <input type="password" name="password" placeholder="Password" required onChange={this.handleChange} />
                 <input type="text" name="email" placeholder="Email" required onChange={this.handleChange} />
                 <input type="text" name="firstname" placeholder="First name" required onChange={this.handleChange} />
@@ -81,7 +78,7 @@ export class Register extends Component {
                     <button type="submit" onClick={this.handleSubmit}>Register</button>
                 </div>
             </form>
-            )
+        )
     }
 
     render() {

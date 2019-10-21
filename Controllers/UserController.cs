@@ -14,6 +14,10 @@ namespace todo.Controllers
     [Route("[controller]")]
     public class UserController : Controller
     {
+        public User Index(User user)
+        {
+            return user;
+        }
         public NpgsqlConnection getDbConnection()
         {
             NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432; User Id=admin; Password=admin; Database=todoapp");
@@ -27,67 +31,48 @@ namespace todo.Controllers
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
 
-            List <User> Users = new List<User>();
+            NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM Users", conn);
 
-            using (NpgsqlTransaction t = conn.BeginTransaction())
-            {
-                using (var cmd = new NpgsqlCommand("SELECT * FROM Users", conn))
-                {
-                    NpgsqlDataReader dr = cmd.ExecuteReader();
-                    while (dr.Read())
-                    {
-                        Console.WriteLine(dr);
-                    }
-                }
-                t.Commit();
-            }
+            NpgsqlDataReader dr = cmd.ExecuteReader();
             
+            List <User> Users = new List<User>();
+            while (dr.Read()) {
+                User u = new User
+                {
+                    username = dr["username"].ToString(),
+                    password = dr["password"].ToString(),
+                    email = dr["email"].ToString(),
+                    firstname = dr["firstname"].ToString(),
+                    lastname = dr["lastname"].ToString()
+                };
+                Users.Add(u);
+            }
            
-            Users.Add(new User("test", "test", "test", "test", "test"));
-            Users.Add(new User("test2", "test2", "test2", "test2", "test2"));
-
             conn.Close();
             return Users;
            
         }
 
+  
 
         // POST: User/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult CreateUser(IFormCollection collection)
+        [Route("create")]
+        public ActionResult CreateUser([FromBody] User user)
         {
-            try
+            NpgsqlConnection conn = getDbConnection();
+            conn.Open();
+            using (var cmd = new NpgsqlCommand($"INSERT INTO Users (username, password, email, firstname, lastname) VALUES (@username, @password, @email, @firstname, @lastname)", conn))
             {
-                // TODO: Add insert logic here
-
-                NpgsqlConnection conn = getDbConnection();
-                conn.Open();
-                User u = new User("sanbre", "pwd", "s.b@live.no", "Sander", "Breivik");
-                //NpgsqlCommand cmd2 = new NpgsqlCommand($"INSERT INTO USERS VALUES({u.Username},{u.Password},{u.Email},{u.Firstname},{u.Lastname}", conn);
-
-                using (var cmd2 = new NpgsqlCommand("INSERT INTO USERS VALUES(@username, @password, @email, @firstname, @lastname)", conn))
-                {
-                    cmd2.Parameters.AddWithValue("username", u.Username);
-                    cmd2.Parameters.AddWithValue("password", u.Password);
-                    cmd2.Parameters.AddWithValue("email", u.Email);
-                    cmd2.Parameters.AddWithValue("firstname", u.Firstname);
-                    cmd2.Parameters.AddWithValue("lastname", u.Lastname);
-                    Console.WriteLine($"CMD: {cmd2.CommandText}");
-                    var rows = cmd2.ExecuteNonQuery();
-                    Console.WriteLine($"{rows} affected");
-
-                }
-
-
-                conn.Close();
-
-                return RedirectToAction(nameof(Index));
+                cmd.Parameters.AddWithValue("username", user.username);
+                cmd.Parameters.AddWithValue("password", user.password);
+                cmd.Parameters.AddWithValue("email", user.email);
+                cmd.Parameters.AddWithValue("firstname", user.firstname);
+                cmd.Parameters.AddWithValue("lastname", user.lastname);
+                cmd.ExecuteNonQuery();
             }
-            catch
-            {
-                return View();
-            }
+            
+            return Ok(user);
         }
 
 

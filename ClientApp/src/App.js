@@ -4,7 +4,7 @@ import { Layout } from './components/Layout';
 import { Home } from './components/Home';
 import './style.css';
 
-import { TodoList } from './components/todoList';
+import { TodoList } from './components/TodoList';
 import { Register } from './components/Register';
 
 export default class App extends Component {

@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
+using todo.Database;
 
 namespace todo.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class TodoController : Controller
     {
 
@@ -19,87 +22,54 @@ namespace todo.Controllers
         }
 
         // GET: Todo
-        public ActionResult Index()
+        [HttpGet]
+        public List<Todo> Index()
         {
-            return View();
-        }
+            NpgsqlConnection conn = getDbConnection();
+            conn.Open();
 
-        // GET: Todo/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+            NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM Todos", conn);
 
-        // GET: Todo/Create
-        public ActionResult Create()
-        {
-            return View();
+            NpgsqlDataReader dr = cmd.ExecuteReader();
+
+            List<Todo> Todos = new List<Todo>();
+            while (dr.Read())
+            {
+               Todo t = new Todo
+                {
+                    title = dr["title"].ToString(),
+                    description = dr["description"].ToString(),
+                    type = dr["type"].ToString(),
+                    completed = Boolean.Parse(dr["completed"].ToString())
+                };
+                Todos.Add(t);
+            }
+
+
+            conn.Close();
+            return Todos;
         }
 
         // POST: Todo/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [Route("create")]
+        public ActionResult Create([FromBody] Todo todo)
         {
-            try
+            NpgsqlConnection conn = getDbConnection();
+            conn.Open();
+            using (var cmd = new NpgsqlCommand($"INSERT INTO Todos (title, description, type, completed, userid) VALUES (@title, @description, @type, @completed)", conn))
             {
-                NpgsqlConnection conn = getDbConnection();
-                conn.Open();
-
-                NpgsqlCommand cmd = new NpgsqlCommand("SELECT username, password FROM Users;');", conn);
-
-                return RedirectToAction(nameof(Index));
+                cmd.Parameters.AddWithValue("username", todo.title);
+                cmd.Parameters.AddWithValue("password", todo.description);
+                cmd.Parameters.AddWithValue("email", todo.type);
+                cmd.Parameters.AddWithValue("firstname", todo.completed);
+                cmd.ExecuteNonQuery();
             }
-            catch
-            {
-                return View();
-            }
+
+
+
+            return Ok(todo);
         }
 
-        // GET: Todo/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Todo/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Todo/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Todo/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

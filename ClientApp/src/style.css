@@ -15,3 +15,7 @@
 .register-form input {
     margin-bottom: 10px;
 }
+
+.todo-item {
+    background-color: #f3f3f3;
+}
