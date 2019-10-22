@@ -1,5 +1,7 @@
 ﻿import React, { Component } from 'react';
+import { Alert, Button } from 'reactstrap'; 
 import "../style.css"
+import { Link } from 'react-router-dom';
 const axios = require("axios");
 
 export class Register extends Component {
@@ -14,7 +16,9 @@ export class Register extends Component {
             firstname: "",
             lastname: "",
             users: [],
-            loading: true
+            loading: true, 
+            error: null,
+            message: null
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -53,14 +57,22 @@ export class Register extends Component {
 
         var Config = { headers }
 
-        var t = axios.post('User/Create', user, Config).then(response => {
+        axios.post('User/Create', user, Config).then(response => {
             console.log(response);
             this.populateUserData();
-            this.renderUserList();
+            this.setState({ message: `${user.firstname} ${user.lastname} was successfully added. You can now log in.`, error: null });
         }).catch(error => {
+            this.setState({ error: "Could not add user. Please try again" });
             console.error(error);
         });
-        
+
+         this.setState({
+             username: "",
+             password: "",
+             email: "",
+             firstname: "",
+             lastname: ""
+         })
        
     }
 
@@ -70,31 +82,30 @@ export class Register extends Component {
 
     renderRegisterForm() {
         return (
-            <form className="register-form" method="post">
-                <input type="text" name="username" placeholder="Username" required onChange={this.handleChange}/>
-                <input type="password" name="password" placeholder="Password" required onChange={this.handleChange} />
-                <input type="text" name="email" placeholder="Email" required onChange={this.handleChange} />
-                <input type="text" name="firstname" placeholder="First name" required onChange={this.handleChange} />
-                <input type="text" name="lastname" placeholder="Last name" required onChange={this.handleChange} />
+            <form className="form register-form" onSubmit={(event) => this.handleSubmit(event)}>
+                <input type="text" name="username" value={this.state.username} placeholder="Username" required onChange={this.handleChange} />
+                <input type="password" name="password" value={this.state.password} placeholder="Password" required onChange={this.handleChange} />
+                <input type="text" name="email" value={this.state.email} placeholder="Email" required onChange={this.handleChange} />
+                <input type="text" name="firstname" value={this.state.firstname} placeholder="First name" required onChange={this.handleChange} />
+                <input type="text" name="lastname" value={this.state.lastname} placeholder="Last name" required onChange={this.handleChange} />
 
                 <div>
-                    <button type="submit" onClick={this.handleSubmit}>Register</button>
+                    <Button outline color="success" type="submit">Register</Button>
                 </div>
             </form>
             )
     }
 
     render() {
-        let contents = this.state.loading
-            ? <p><em>Loading...</em></p>
-            : this.renderUserList(this.state.users);
-
         return (
-            <div>
-                <h1 id="title" >Register user</h1>
-                {this.renderRegisterForm()}
-                <p>This component demonstrates fetching data from the server.</p>
-                {contents}
+            <div className="register-wrapper">
+                <div className="register-container">
+                    <h1 id="title" >Register user</h1>
+                    {this.renderRegisterForm()}
+                    {this.state.message ? <Alert color="success">{this.state.message}</Alert> : null}
+                    {this.state.error ? <Alert color="danger">{this.state.error}</Alert> : null}
+                    <p>Login <Link to="/">here</Link></p>
+                </div>
             </div>
         );
     }

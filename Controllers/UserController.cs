@@ -31,7 +31,7 @@ namespace todo.Controllers
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
 
-            NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM Users", conn);
+            NpgsqlCommand cmd = new NpgsqlCommand("SELECT firstname, lastname, id FROM Users", conn);
 
             NpgsqlDataReader dr = cmd.ExecuteReader();
             
@@ -39,11 +39,9 @@ namespace todo.Controllers
             while (dr.Read()) {
                 User u = new User
                 {
-                    username = dr["username"].ToString(),
-                    password = dr["password"].ToString(),
-                    email = dr["email"].ToString(),
                     firstname = dr["firstname"].ToString(),
-                    lastname = dr["lastname"].ToString()
+                    lastname = dr["lastname"].ToString(),
+                    id = Convert.ToInt32(dr["id"])
                 };
                 Users.Add(u);
             }
@@ -52,8 +50,6 @@ namespace todo.Controllers
             return Users;
            
         }
-
-  
 
         // POST: User/Create
         [HttpPost]
@@ -75,23 +71,5 @@ namespace todo.Controllers
             return Ok(user);
         }
 
-
-
-        // POST: User/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

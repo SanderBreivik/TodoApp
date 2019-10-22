@@ -1,41 +1,26 @@
 ﻿import React, { Component } from 'react';
+import { Button, Alert } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import "../style.css"
+
+import { Redirect } from "react-router"
 const axios = require("axios");
 
-export class Register extends Component {
-    static displayName = Register.name;
+export class Login extends Component {
+    static displayName = Login.name;
 
     constructor(props) {
         super(props);
         this.state = {
             username: "",
             password: "",
-            email: "",
-            firstname: "",
-            lastname: "",
-            users: [],
-            loading: true
+            errorMsg: "",
+            userId: null, 
+            redirect: false
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
-
-    componentDidMount() {
-        this.populateUserData();
-    }
-
-    renderUserList(users) {
-        return (
-
-            <div>
-                <h3>Users:</h3>
-                {users.map((user, index) => {
-                    return <h4 key={index}>{user.username}</h4>
-
-                })}
-            </div>
-        );
-    }
-
+   
     handleSubmit(event) {
         console.log("Handeling submit");
         event.preventDefault();
@@ -50,56 +35,51 @@ export class Register extends Component {
 
         var Config = { headers }
 
-        var t = axios.post('User/Create', user, Config).then(response => {
+        axios.post('login/login', user, Config).then(response => {
             console.log(response);
-            this.populateUserData();
-            this.renderUserList();
+            console.log("ID:", response.data);
+            console.log("ROUTE:", this.props.setUserId);
+            this.props.setUserId(response.data);
+            this.setState({ errorMsg: "", userId: response.data, redirect: true });
         }).catch(error => {
             console.error(error);
+            this.setState({ errorMsg: "Username or password is incorrect, try again!" });
         });
-
-
     }
 
     handleChange = (event) => {
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    renderRegisterForm() {
+    renderRedirect = () => {
         return (
-            <form className="register-form" method="post">
+            <Redirect to="/todolist"/>
+            )
+    }
+
+    renderLoginForm() {
+        return (
+            <form className="form login-form" method="post">
                 <input type="text" name="username" placeholder="Username" required onChange={this.handleChange} />
                 <input type="password" name="password" placeholder="Password" required onChange={this.handleChange} />
-                <input type="text" name="email" placeholder="Email" required onChange={this.handleChange} />
-                <input type="text" name="firstname" placeholder="First name" required onChange={this.handleChange} />
-                <input type="text" name="lastname" placeholder="Last name" required onChange={this.handleChange} />
-
                 <div>
-                    <button type="submit" onClick={this.handleSubmit}>Register</button>
+                    <Button outline color="success" type="submit" onClick={this.handleSubmit}>Login</Button>
                 </div>
             </form>
         )
     }
 
     render() {
-        let contents = this.state.loading
-            ? <p><em>Loading...</em></p>
-            : this.renderUserList(this.state.users);
-
         return (
-            <div>
-                <h1 id="title" >Register user</h1>
-                {this.renderRegisterForm()}
-                <p>This component demonstrates fetching data from the server.</p>
-                {contents}
+            <div className="login-wrapper">
+                <div className="login-container">
+                    <h1 id="title" >Login</h1>
+                    {this.renderLoginForm()}
+                    <p>New user? Register <Link to="/register">here </Link></p>
+                    {this.state.errorMsg ? <Alert color="danger" id="error-msg">{this.state.errorMsg} </Alert> : <p></p>}
+                    {this.state.redirect ? this.renderRedirect() : null}
+                </div>
             </div>
         );
-    }
-
-    async populateUserData() {
-        const response = await fetch('user');
-        const data = await response.json();
-        console.log("DATA:", data);
-        this.setState({ users: data, loading: false });
     }
 }

@@ -1,21 +1,67 @@
-﻿.add-task-form {
-    width: 150px;
-    margin: 0;
+﻿html, body {
+    height: 100%;
+    width: 100%;
+}
+
+.form input[type=text], .form input[type=password] {
+    display: inline-block;
+    width: 60%;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     box-sizing: border-box;
 }
 
-.register-form {
-    width: 150px;
-    margin: 0;
-
-    box-sizing: border-box;
-   
+.login-wrapper, .register-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.register-form input {
-    margin-bottom: 10px;
+.login-container, .register-container {
+    text-align: center;
+}
+::-webkit-input-placeholder {
+    text-align: center;
+}
+
+.todo-list-wrapper {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.todo-item-container {
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+    grid-template-areas: "todo btn";
+}
+
+#todo-item {
+    grid-area: todo;
+    display: grid;
+    grid-template-areas: "title" "desc" "type";
+}
+#todo-item-title {
+    grid-area: title;
+}
+
+#todo-item-desc {
+    grid-area: desc;
+}
+
+#todo-item-type {
+    grid-area: type;
+}
+
+#delete-btn {
+    grid-area: btn;
 }
 
 .todo-item {
     background-color: #f3f3f3;
+}
+
+.todo-item-completed  {
+    text-decoration-line: line-through;
 }

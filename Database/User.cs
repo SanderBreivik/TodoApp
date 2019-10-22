@@ -12,7 +12,7 @@ namespace todo.Database
         public string firstname { get; set; }
         public string lastname { get; set; }
         public string email { get; set; }
-
+        public int id { get; set; }
         public User()
 
         {

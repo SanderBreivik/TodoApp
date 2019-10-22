@@ -35,12 +35,14 @@ namespace todo.Controllers
             List<Todo> Todos = new List<Todo>();
             while (dr.Read())
             {
-               Todo t = new Todo
+                Todo t = new Todo
                 {
+                    id = Convert.ToInt32(dr["id"]),
                     title = dr["title"].ToString(),
                     description = dr["description"].ToString(),
                     type = dr["type"].ToString(),
-                    completed = Boolean.Parse(dr["completed"].ToString())
+                    completed = Boolean.Parse(dr["completed"].ToString()),
+                    userid = Convert.ToInt32(dr["userid"])
                 };
                 Todos.Add(t);
             }
@@ -50,6 +52,43 @@ namespace todo.Controllers
             return Todos;
         }
 
+        [HttpGet("{userid}")]
+        [Route("todo/{userid}")]
+        public IActionResult GetUserTodos([FromRoute (Name ="userid")] int? userid)
+        {
+            NpgsqlConnection conn = getDbConnection();
+            conn.Open();
+            Console.WriteLine($"ID: {userid}");
+            Console.WriteLine($"userid==null?:{userid==null}");
+
+            List<Todo> Todos = new List<Todo>();
+            using (var cmd = new NpgsqlCommand("SELECT * FROM Todos WHERE userid=@id", conn))
+            {
+                Console.WriteLine("HERE");
+                cmd.Parameters.AddWithValue("id", userid);
+                NpgsqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    Todo t = new Todo
+                    {
+                        id = Convert.ToInt32(dr["id"]),
+                        title = dr["title"].ToString(),
+                        description = dr["description"].ToString(),
+                        type = dr["type"].ToString(),
+                        completed = Boolean.Parse(dr["completed"].ToString()),
+                        userid = Convert.ToInt32(dr["userid"])
+                    };
+                    Todos.Add(t);
+                    Console.WriteLine($"TODO: TITLE: {Todos[0].title}");
+                    
+                }
+                    return Ok(Todos);
+            }
+            return NotFound();
+        }
+
+
+
         // POST: Todo/Create
         [HttpPost]
         [Route("create")]
@@ -57,17 +96,49 @@ namespace todo.Controllers
         {
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
-            using (var cmd = new NpgsqlCommand($"INSERT INTO Todos (title, description, type, completed, userid) VALUES (@title, @description, @type, @completed)", conn))
+            using (var cmd = new NpgsqlCommand($"INSERT INTO Todos (title, description, type, completed, userid) VALUES (@title, @description, @type, @completed, @userid)", conn))
             {
-                cmd.Parameters.AddWithValue("username", todo.title);
-                cmd.Parameters.AddWithValue("password", todo.description);
-                cmd.Parameters.AddWithValue("email", todo.type);
-                cmd.Parameters.AddWithValue("firstname", todo.completed);
+                cmd.Parameters.AddWithValue("title", todo.title);
+                cmd.Parameters.AddWithValue("description", todo.description);
+                cmd.Parameters.AddWithValue("type", todo.type);
+                cmd.Parameters.AddWithValue("completed", todo.completed);
+                cmd.Parameters.AddWithValue("userid", todo.userid);
+                //TODO: change 4 to actual logged in user
                 cmd.ExecuteNonQuery();
             }
 
 
 
+            return Ok(todo);
+        }
+
+        [HttpPost]
+        [Route("update")]
+        public IActionResult Update([FromBody] Todo todo)
+        {
+            Console.WriteLine(todo.id);
+            NpgsqlConnection conn = getDbConnection();
+            conn.Open();
+            using (var cmd = new NpgsqlCommand($"UPDATE todos SET completed = NOT completed WHERE id = @id", conn))
+            {
+                cmd.Parameters.AddWithValue("id", todo.id);
+                cmd.ExecuteNonQuery();
+            }
+            return Ok(todo);
+        }
+
+        [HttpPost]
+        [Route("delete")]
+        public IActionResult Delete([FromBody] Todo todo)
+        {
+            Console.WriteLine(todo.id);
+            NpgsqlConnection conn = getDbConnection();
+            conn.Open();
+            using (var cmd = new NpgsqlCommand($"DELETE FROM todos WHERE id = @id", conn))
+            {
+                cmd.Parameters.AddWithValue("id", todo.id);
+                cmd.ExecuteNonQuery();
+            }
             return Ok(todo);
         }
 
