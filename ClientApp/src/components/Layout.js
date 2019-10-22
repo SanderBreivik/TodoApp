@@ -7,8 +7,8 @@ export class Layout extends Component {
 
   render () {
     return (
-      <div>
-        <NavMenu />
+        <div>
+            {this.props.hideNavBar ? null : <NavMenu fromLogout={this.props.fromLogout} />}
         <Container>
           {this.props.children}
         </Container>

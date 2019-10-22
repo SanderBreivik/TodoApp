@@ -14,15 +14,19 @@ export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userid: null
+            userid: null, 
+            hideNavBar: true
         }
     }
     
     setUserId = (userid) => {
-        this.setState({ userid: userid });
+        this.setState({ userid: userid, hideNavBar: false });
         console.log("SET USER ID: ", this.state.userid)
     };
 
+    fromLogout = () => {
+        this.setState({ hideNavBar: true })
+    }
 
   render () {
     const LoginComponent = (props) => {
@@ -36,8 +40,8 @@ export default class App extends Component {
               <TodoList userid={this.state.userid} /> 
               )
       }
-    return (
-        <Layout>
+      return (
+          <Layout hideNavBar={this.state.hideNavBar} fromLogout={this.fromLogout} >
             <Route exact path='/' render={LoginComponent} />
             <Route path='/todolist' render={TodoListComponent} />
             <Route path='/register' component={Register} />
