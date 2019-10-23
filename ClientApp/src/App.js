@@ -8,6 +8,7 @@ import { Register } from './components/Register';
 import { Login } from './components/Login';
 import { UserList } from './components/UserList';
 
+
 export default class App extends Component {
     static displayName = App.name;
 
@@ -18,17 +19,16 @@ export default class App extends Component {
             hideNavBar: true
         }
     }
-    
+   
     setUserId = (userid) => {
         this.setState({ userid: userid, hideNavBar: false });
-        console.log("SET USER ID: ", this.state.userid)
     };
 
     fromLogout = () => {
         this.setState({ hideNavBar: true })
     }
 
-  render () {
+render() {
     const LoginComponent = (props) => {
         return (
             <Login setUserId={this.setUserId} {...props} />

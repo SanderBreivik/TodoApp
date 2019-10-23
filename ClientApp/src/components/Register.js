@@ -1,5 +1,5 @@
 ﻿import React, { Component } from 'react';
-import { Alert, Button } from 'reactstrap'; 
+import { Alert, Button, Form, Input} from 'reactstrap'; 
 import "../style.css"
 import { Link } from 'react-router-dom';
 const axios = require("axios");
@@ -41,7 +41,6 @@ export class Register extends Component {
     }
 
      handleSubmit(event) {
-        console.log("Handeling submit");
         event.preventDefault();
         
         var user = {
@@ -58,12 +57,10 @@ export class Register extends Component {
         var Config = { headers }
 
         axios.post('User/Create', user, Config).then(response => {
-            console.log(response);
             this.populateUserData();
             this.setState({ message: `${user.firstname} ${user.lastname} was successfully added. You can now log in.`, error: null });
         }).catch(error => {
             this.setState({ error: "Could not add user. Please try again" });
-            console.error(error);
         });
 
          this.setState({
@@ -82,17 +79,17 @@ export class Register extends Component {
 
     renderRegisterForm() {
         return (
-            <form className="form register-form" onSubmit={(event) => this.handleSubmit(event)}>
-                <input type="text" name="username" value={this.state.username} placeholder="Username" required onChange={this.handleChange} />
-                <input type="password" name="password" value={this.state.password} placeholder="Password" required onChange={this.handleChange} />
-                <input type="text" name="email" value={this.state.email} placeholder="Email" required onChange={this.handleChange} />
-                <input type="text" name="firstname" value={this.state.firstname} placeholder="First name" required onChange={this.handleChange} />
-                <input type="text" name="lastname" value={this.state.lastname} placeholder="Last name" required onChange={this.handleChange} />
+            <Form className="form register-form" onSubmit={(event) => this.handleSubmit(event)}>
+                <Input type="text" name="username" value={this.state.username} placeholder="Username" required onChange={this.handleChange} />
+                <Input type="password" name="password" value={this.state.password} placeholder="Password" required onChange={this.handleChange} />
+                <Input type="text" name="email" value={this.state.email} placeholder="Email" required onChange={this.handleChange} />
+                <Input type="text" name="firstname" value={this.state.firstname} placeholder="First name" required onChange={this.handleChange} />
+                <Input type="text" name="lastname" value={this.state.lastname} placeholder="Last name" required onChange={this.handleChange} />
 
                 <div>
                     <Button outline color="success" type="submit">Register</Button>
                 </div>
-            </form>
+            </Form>
             )
     }
 
@@ -104,7 +101,7 @@ export class Register extends Component {
                     {this.renderRegisterForm()}
                     {this.state.message ? <Alert color="success">{this.state.message}</Alert> : null}
                     {this.state.error ? <Alert color="danger">{this.state.error}</Alert> : null}
-                    <p>Login <Link to="/">here</Link></p>
+                    <p>Login <Link to="/" style={{ color: "#28A745" }}>here</Link></p>
                 </div>
             </div>
         );
@@ -113,7 +110,6 @@ export class Register extends Component {
     async populateUserData() {
         const response = await fetch('user');
         const data = await response.json();
-        console.log("DATA:", data);
         this.setState({ users: data, loading: false });
     }
 }

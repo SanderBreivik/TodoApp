@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
 import { ListItem } from './ListItem';
-import { Button } from 'reactstrap';
+import { Button, Form, Input } from 'reactstrap';
 import '../style.css'
 const axios = require("axios");
 
@@ -37,10 +37,13 @@ export class TodoList extends Component {
         var Config = { headers }
 
         axios.post('Todo/Create', todo, Config).then(response => {
-            console.log(response);
             this.populateTodoData();
+            this.setState({
+                title: "",
+                description: "",
+                type: "Main Task"
+            })
         }).catch(error => {
-            console.error(error);
         });
 
         event.preventDefault();
@@ -73,10 +76,8 @@ export class TodoList extends Component {
         var Config = { headers }
 
         axios.post('todo/update', todo, Config).then(response => {
-            console.log(response);
             this.populateTodoData();
         }).catch(error => {
-            console.error(error);
         });
     }
 
@@ -89,44 +90,43 @@ export class TodoList extends Component {
         var Config = { headers }
 
         axios.post('todo/delete', todo, Config).then(response => {
-            console.log(response);
             this.populateTodoData();
         }).catch(error => {
-            console.error(error);
         });
     }
 
-    renderTodoList = () => {
-        const todoItems = this.state.todoItems
-       
-        return (
-            todoItems.map((todo, index) => (<ListItem key={index} todo={todo} index={index} deleteTodo={() => this.deleteTodo(todo)} onClick={() => this.toggleCompletion(todo)} />))
-        )
-    }
-
     render() {
-        let contents = this.state.loading
-            ? <p><em>Loading todos...</em></p>
-            : this.renderTodoList(this.state.todoItems);
+        const completedItems = this.state.todoItems.filter((todo) => todo.completed);
+        const uncompletedItems = this.state.todoItems.filter((todo) => !todo.completed);
+        const todoItems = this.state.todoItems;
         return (
             <div className="todo-list-wrapper">
                 <div className="todo-list-container">
                     <div className="form add-task-form">
                         <h3>Add a new task </h3 >
-                        <form className="add-task-form" onSubmit={this.addTask} >
-                            <input name="title" type="text" placeholder="Title" value={this.state.title} onChange={this.handleInputChange} required />
-                            <textarea name="description" placeholder="Description" onChange={this.handleInputChange} required />
-                            <select name="type" onChange={this.handleInputChange} >
+                        <Form className="add-task-form" onSubmit={this.addTask} >
+                            <Input id="add-task-form-title" name="title" type="text" placeholder="Title" value={this.state.title} onChange={this.handleInputChange} required />
+                            <Input id="add-task-form-desc" type="textarea" name="description" placeholder="Description" value={this.state.description} onChange={this.handleInputChange} required />
+                            <Input id="add-task-form-type" type="select" name="type" value={this.state.type} onChange={this.handleInputChange} >
                                 <option value="Main Task" > Main task</option >
                                 <option value="Sub Task" > Sub task</option >
                                 <option value="Important" > Important</option >
                                 <option value="Private" > Private</option >
-                            </select >
-                            <Button type="submit"> Add </Button>
-                        </form >
+                            </Input >
+                            <Button color="success" type="submit"> Add </Button>
+                        </Form >
                     </div>
-
-                    {contents}
+                    <div className="task-list-container">
+                        <h2>My todos: </h2>
+                        <div>
+                            <h4>Uncompleted tasks ({uncompletedItems.length})</h4>
+                            {uncompletedItems.length >= 1 ? uncompletedItems.map((todo, index) => (<ListItem key={index} todo={todo} index={index} deleteTodo={() => this.deleteTodo(todo)} onClick={() => this.toggleCompletion(todo)} />)) : <p>No uncompleted todos! Add one now.</p>}
+                        </div>
+                        <div>
+                            <h4>Completed tasks ({completedItems.length})</h4>
+                            {completedItems.length >= 1 ? completedItems.map((todo, index) => (<ListItem key={index} todo={todo} index={index} deleteTodo={() => this.deleteTodo(todo)} onClick={() => this.toggleCompletion(todo)} />)) : <p>No completed todos.</p>}
+                        </div>
+                    </div>
                 </div>
 
             </div >

@@ -58,13 +58,10 @@ namespace todo.Controllers
         {
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
-            Console.WriteLine($"ID: {userid}");
-            Console.WriteLine($"userid==null?:{userid==null}");
 
             List<Todo> Todos = new List<Todo>();
             using (var cmd = new NpgsqlCommand("SELECT * FROM Todos WHERE userid=@id", conn))
             {
-                Console.WriteLine("HERE");
                 cmd.Parameters.AddWithValue("id", userid);
                 NpgsqlDataReader dr = cmd.ExecuteReader();
                 while (dr.Read())
@@ -79,12 +76,13 @@ namespace todo.Controllers
                         userid = Convert.ToInt32(dr["userid"])
                     };
                     Todos.Add(t);
-                    Console.WriteLine($"TODO: TITLE: {Todos[0].title}");
                     
                 }
-                    return Ok(Todos);
+                conn.Close();
+
+                return Ok(Todos);
             }
-            return NotFound();
+           
         }
 
 
@@ -103,12 +101,9 @@ namespace todo.Controllers
                 cmd.Parameters.AddWithValue("type", todo.type);
                 cmd.Parameters.AddWithValue("completed", todo.completed);
                 cmd.Parameters.AddWithValue("userid", todo.userid);
-                //TODO: change 4 to actual logged in user
                 cmd.ExecuteNonQuery();
             }
-
-
-
+            conn.Close();
             return Ok(todo);
         }
 
@@ -116,7 +111,6 @@ namespace todo.Controllers
         [Route("update")]
         public IActionResult Update([FromBody] Todo todo)
         {
-            Console.WriteLine(todo.id);
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
             using (var cmd = new NpgsqlCommand($"UPDATE todos SET completed = NOT completed WHERE id = @id", conn))
@@ -124,6 +118,7 @@ namespace todo.Controllers
                 cmd.Parameters.AddWithValue("id", todo.id);
                 cmd.ExecuteNonQuery();
             }
+            conn.Close();
             return Ok(todo);
         }
 
@@ -131,7 +126,6 @@ namespace todo.Controllers
         [Route("delete")]
         public IActionResult Delete([FromBody] Todo todo)
         {
-            Console.WriteLine(todo.id);
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
             using (var cmd = new NpgsqlCommand($"DELETE FROM todos WHERE id = @id", conn))
@@ -139,6 +133,7 @@ namespace todo.Controllers
                 cmd.Parameters.AddWithValue("id", todo.id);
                 cmd.ExecuteNonQuery();
             }
+            conn.Close();
             return Ok(todo);
         }
 

@@ -67,7 +67,8 @@ namespace todo.Controllers
                 cmd.Parameters.AddWithValue("lastname", user.lastname);
                 cmd.ExecuteNonQuery();
             }
-            
+            conn.Close();
+
             return Ok(user);
         }
 
