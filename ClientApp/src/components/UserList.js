@@ -30,7 +30,7 @@ export class UserList extends Component {
         const colors = ["#e8e8e8", "#f2f2f2"];
         return (
             users.map((user, index) => (
-                <div className="user-todo-list-container" style={{ backgroundColor:  index % 2 == 0 ? colors[1] : colors[0] }} key={user.id}>
+                <div className="user-todo-list-container" style={{ backgroundColor:  index % 2 === 0 ? colors[1] : colors[0] }} key={user.id}>
                     <h2>{user.firstname + " " + user.lastname}'s todos</h2>
                     <UserTodoList id={user.id}/>
                 </div>

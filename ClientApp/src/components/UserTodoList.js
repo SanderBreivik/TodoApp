@@ -40,7 +40,7 @@ export class UserTodoList extends Component {
         if (errorMsg) return <p>{errorMsg}</p>;
         else return (
             <div className="user-todo-list-items">
-                {todoItems.length == 0 ? <p> No todos for this user </p> : null}
+                {todoItems.length === 0 ? <p> No todos for this user </p> : null}
                 {
                     completedItems.length >= 1 ?
                         <div className="user-todo-item-container">

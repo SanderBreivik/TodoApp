@@ -18,14 +18,12 @@ namespace todo.Controllers
 
             return conn;
         }
-        // GET: Login
-        public ActionResult Index()
-        {
-            return View();
-        }
+     
+        /*
+         POST request. Use route 'login'. The body contains a user
+         object with password and username.
+        */
 
-
-        // POST: Login/Create
         [HttpPost]
         [Route("login")]
         public ActionResult Login([FromBody] Login user )

@@ -18,6 +18,7 @@ namespace todo.Controllers
         {
             return user;
         }
+
         public NpgsqlConnection getDbConnection()
         {
             NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432; User Id=admin; Password=admin; Database=todoapp");
@@ -25,6 +26,9 @@ namespace todo.Controllers
             return conn;
         }
 
+        /* GET request. Use route 'user'. Gets all users. 
+         *
+        */
         [HttpGet]
         public List<User> GetUsers()
         {
@@ -51,7 +55,9 @@ namespace todo.Controllers
            
         }
 
-        // POST: User/Create
+        /* POST request. Use route 'create'. Creates a new user. 
+         * 
+         */
         [HttpPost]
         [Route("create")]
         public ActionResult CreateUser([FromBody] User user)

@@ -23,7 +23,6 @@ export class Login extends Component {
     }
    
     handleSubmit(event) {
-        console.log("Handeling submit");
         event.preventDefault();
 
         var user = {

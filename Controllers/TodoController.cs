@@ -21,7 +21,9 @@ namespace todo.Controllers
             return conn;
         }
 
-        // GET: Todo
+        /* GET request. Gets all todos.
+         * 
+         */
         [HttpGet]
         public List<Todo> Index()
         {
@@ -52,6 +54,10 @@ namespace todo.Controllers
             return Todos;
         }
 
+
+        /* GET request. Use route 'todo/{userid}' where userid is the id
+         * of the user you want to get todos from.
+        */
         [HttpGet("{userid}")]
         [Route("todo/{userid}")]
         public IActionResult GetUserTodos([FromRoute (Name ="userid")] int? userid)
@@ -86,7 +92,9 @@ namespace todo.Controllers
         }
 
 
-
+        /* POST request. Use route 'create'. Creates a new todo
+         * to the user.
+         */
         // POST: Todo/Create
         [HttpPost]
         [Route("create")]
@@ -107,6 +115,9 @@ namespace todo.Controllers
             return Ok(todo);
         }
 
+        /* POST request. Use route 'update'. Toggles the completion
+         * of a todo.
+         */
         [HttpPost]
         [Route("update")]
         public IActionResult Update([FromBody] Todo todo)
@@ -122,6 +133,10 @@ namespace todo.Controllers
             return Ok(todo);
         }
 
+
+        /* POST request. Use route 'delete'. Deletes a specified todo
+         * 
+         */
         [HttpPost]
         [Route("delete")]
         public IActionResult Delete([FromBody] Todo todo)

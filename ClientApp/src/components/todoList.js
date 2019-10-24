@@ -98,7 +98,7 @@ export class TodoList extends Component {
     render() {
         const completedItems = this.state.todoItems.filter((todo) => todo.completed);
         const uncompletedItems = this.state.todoItems.filter((todo) => !todo.completed);
-        const todoItems = this.state.todoItems;
+        
         return (
             <div className="todo-list-wrapper">
                 <div className="todo-list-container">
