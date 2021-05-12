@@ -21,7 +21,7 @@ namespace todo.Controllers
 
         public NpgsqlConnection getDbConnection()
         {
-            NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432; User Id=admin; Password=admin; Database=todoapp");
+            NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432; User Id=postgres; Password=admin; Database=todoapp");
 
             return conn;
         }
@@ -35,7 +35,7 @@ namespace todo.Controllers
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
 
-            NpgsqlCommand cmd = new NpgsqlCommand("SELECT firstname, lastname, id FROM Users", conn);
+            NpgsqlCommand cmd = new NpgsqlCommand("SELECT firstname, lastname, id FROM \"Users\"", conn);
 
             NpgsqlDataReader dr = cmd.ExecuteReader();
             
@@ -64,7 +64,7 @@ namespace todo.Controllers
         {
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
-            using (var cmd = new NpgsqlCommand($"INSERT INTO Users (username, password, email, firstname, lastname) VALUES (@username, @password, @email, @firstname, @lastname)", conn))
+            using (var cmd = new NpgsqlCommand($"INSERT INTO \"Users\" (username, password, email, firstname, lastname) VALUES (@username, @password, @email, @firstname, @lastname)", conn))
             {
                 cmd.Parameters.AddWithValue("username", user.username);
                 cmd.Parameters.AddWithValue("password", user.password);

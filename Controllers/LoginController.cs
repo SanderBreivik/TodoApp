@@ -14,7 +14,7 @@ namespace todo.Controllers
     {
         public NpgsqlConnection getDbConnection()
         {
-            NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432; User Id=admin; Password=admin; Database=todoapp");
+            NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432; User Id=postgres; Password=admin; Database=todoapp");
 
             return conn;
         }
@@ -31,7 +31,7 @@ namespace todo.Controllers
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
             
-            using (var cmd = new NpgsqlCommand("SELECT COUNT(*) FROM Users WHERE username=@username AND password=@password", conn))
+            using (var cmd = new NpgsqlCommand("SELECT COUNT(*) FROM \"Users\" WHERE username=@username AND password=@password", conn))
             {
                 cmd.Parameters.AddWithValue("username", user.username);
                 cmd.Parameters.AddWithValue("password", user.password);
@@ -43,7 +43,7 @@ namespace todo.Controllers
                     return NotFound();
                 } else
                 {
-                    using (var cmd2 = new NpgsqlCommand("SELECT id FROM users WHERE username=@username", conn))
+                    using (var cmd2 = new NpgsqlCommand("SELECT id FROM \"Users\" WHERE username=@username", conn))
                     {
                         cmd2.Parameters.AddWithValue("username", user.username);
                         NpgsqlDataReader dr = cmd2.ExecuteReader();

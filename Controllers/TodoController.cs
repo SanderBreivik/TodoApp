@@ -16,7 +16,7 @@ namespace todo.Controllers
 
         public NpgsqlConnection getDbConnection()
         {
-            NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432; User Id=admin; Password=admin; Database=todoapp");
+            NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432; User Id=postgres; Password=admin; Database=todoapp");
 
             return conn;
         }
@@ -30,7 +30,7 @@ namespace todo.Controllers
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
 
-            NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM Todos", conn);
+            NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM \"Todos\"", conn);
 
             NpgsqlDataReader dr = cmd.ExecuteReader();
 
@@ -66,7 +66,7 @@ namespace todo.Controllers
             conn.Open();
 
             List<Todo> Todos = new List<Todo>();
-            using (var cmd = new NpgsqlCommand("SELECT * FROM Todos WHERE userid=@id", conn))
+            using (var cmd = new NpgsqlCommand("SELECT * FROM \"Todos\" WHERE userid=@id", conn))
             {
                 cmd.Parameters.AddWithValue("id", userid);
                 NpgsqlDataReader dr = cmd.ExecuteReader();
@@ -102,7 +102,7 @@ namespace todo.Controllers
         {
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
-            using (var cmd = new NpgsqlCommand($"INSERT INTO Todos (title, description, type, completed, userid) VALUES (@title, @description, @type, @completed, @userid)", conn))
+            using (var cmd = new NpgsqlCommand($"INSERT INTO \"Todos\" (title, description, type, completed, userid) VALUES (@title, @description, @type, @completed, @userid)", conn))
             {
                 cmd.Parameters.AddWithValue("title", todo.title);
                 cmd.Parameters.AddWithValue("description", todo.description);
@@ -124,7 +124,7 @@ namespace todo.Controllers
         {
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
-            using (var cmd = new NpgsqlCommand($"UPDATE todos SET completed = NOT completed WHERE id = @id", conn))
+            using (var cmd = new NpgsqlCommand($"UPDATE \"Todos\" SET completed = NOT completed WHERE id = @id", conn))
             {
                 cmd.Parameters.AddWithValue("id", todo.id);
                 cmd.ExecuteNonQuery();
@@ -143,7 +143,7 @@ namespace todo.Controllers
         {
             NpgsqlConnection conn = getDbConnection();
             conn.Open();
-            using (var cmd = new NpgsqlCommand($"DELETE FROM todos WHERE id = @id", conn))
+            using (var cmd = new NpgsqlCommand($"DELETE FROM \"Todos\" WHERE id = @id", conn))
             {
                 cmd.Parameters.AddWithValue("id", todo.id);
                 cmd.ExecuteNonQuery();
